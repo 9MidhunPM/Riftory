@@ -1,24 +1,32 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import React, { useEffect } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { FavoritesProvider, UpsideDownProvider } from '../src/context';
+import { BottomTabNavigator } from '../src/navigation';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
+/**
+ * Root Layout with Context Providers
+ * 
+ * Provider hierarchy:
+ * 1. UpsideDownProvider - Theme mode (Normal/Upside Down)
+ * 2. FavoritesProvider - Saved items state
+ * 3. SafeAreaProvider - Safe area insets
+ * 4. BottomTabNavigator - Navigation container
+ */
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  useEffect(() => {
+    console.log('[App] Riftory Marketplace initialized');
+    console.log('[App] Contexts: UpsideDown + Favorites ready');
+  }, []);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <UpsideDownProvider>
+      <FavoritesProvider>
+        <SafeAreaProvider>
+          <StatusBar style="light" />
+          <BottomTabNavigator />
+        </SafeAreaProvider>
+      </FavoritesProvider>
+    </UpsideDownProvider>
   );
 }
